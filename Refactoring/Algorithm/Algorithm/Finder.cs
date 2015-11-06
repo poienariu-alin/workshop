@@ -1,67 +1,47 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace Algorithm
 {
     public class Finder
     {
-        private readonly List<Thing> _p;
-
-        public Finder(List<Thing> p)
+        public static MatchingResult Find(List<Person> people, IResultSelector selector)
         {
-            _p = p;
+            var tr = GenerateAgePairs(people);
+
+            return selector.SelectMatching(tr);
         }
 
-        public F Find(FT ft)
+        private static List<MatchingResult> GenerateAgePairs(List<Person> people)
         {
-            var tr = new List<F>();
-
-            for(var i = 0; i < _p.Count - 1; i++)
+            var tr = new List<MatchingResult>();
+            
+            for (var i = 0; i < people.Count - 1; i++)
             {
-                for(var j = i + 1; j < _p.Count; j++)
+                for (var j = i + 1; j < people.Count; j++)
                 {
-                    var r = new F();
-                    if(_p[i].BirthDate < _p[j].BirthDate)
-                    {
-                        r.P1 = _p[i];
-                        r.P2 = _p[j];
-                    }
-                    else
-                    {
-                        r.P1 = _p[j];
-                        r.P2 = _p[i];
-                    }
-                    r.D = r.P2.BirthDate - r.P1.BirthDate;
+                    var r = ComparePersons(people[i], people[j]);
                     tr.Add(r);
                 }
             }
+            return tr;
+        }
 
-            if(tr.Count < 1)
+        private static MatchingResult ComparePersons(Person first, Person second)
+        {
+            var r = new MatchingResult();
+            if (first.BirthDate < second.BirthDate)
             {
-                return new F();
+                r.FirstPerson = first;
+                r.SecondPerson = second;
             }
-
-            F answer = tr[0];
-            foreach(var result in tr)
+            else
             {
-                switch(ft)
-                {
-                    case FT.One:
-                        if(result.D < answer.D)
-                        {
-                            answer = result;
-                        }
-                        break;
-
-                    case FT.Two:
-                        if(result.D > answer.D)
-                        {
-                            answer = result;
-                        }
-                        break;
-                }
+                r.FirstPerson = second;
+                r.SecondPerson = first;
             }
-
-            return answer;
+            r.AgeDifference = r.SecondPerson.BirthDate - r.FirstPerson.BirthDate;
+            return r;
         }
     }
 }

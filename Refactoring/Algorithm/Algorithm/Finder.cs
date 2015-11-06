@@ -9,11 +9,6 @@ namespace Algorithm
         {
             var tr = GenerateAgePairs(people);
 
-            if(!tr.Any())
-            {
-                return new MatchingResult();
-            }
-
             return selector.SelectMatching(tr);
         }
 
